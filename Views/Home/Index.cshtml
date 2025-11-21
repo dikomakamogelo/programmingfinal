@@ -1,0 +1,59 @@
+@model IEnumerable<CMCS.Web.Models.Claim>
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<div class="d-flex justify-content-between align-items-center">
+    <h2>Contract Monthly Claim System (CMCS)</h2>
+    <a class="btn btn-primary" asp-controller="Claims" asp-action="Create">Create New Claim</a>
+</div>
+
+@if (TempData["Msg"] != null)
+{
+    <div class="alert alert-success mt-2">@TempData["Msg"]</div>
+}
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Date (dd/MM/yyyy)</th>
+            <th>Lecturer</th>
+            <th>Hours</th>
+            <th>Rate</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Attachments</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var c in Model)
+    {
+        <tr>
+            <td>@c.Month</td>
+            <td>@c.LecturerName</td>
+            <td>@c.TotalHours</td>
+            <td>R @c.HourlyRate</td>
+            <td>R @c.TotalAmount.ToString("N2")</td>
+            <td>
+                <span class="badge @(c.Status == CMCS.Web.Models.ClaimStatus.Approved
+                    ? "bg-success"
+                    : c.Status == CMCS.Web.Models.ClaimStatus.Rejected
+                        ? "bg-danger"
+                        : c.Status == CMCS.Web.Models.ClaimStatus.Submitted
+                            ? "bg-warning text-dark"
+                            : "bg-secondary")">
+                    @c.Status
+                </span>
+            </td>
+            <td>
+                @if (c.Attachments?.Any() == true)
+                {
+                    foreach (var a in c.Attachments)
+                    {
+                        <a href="@a.StoragePath" target="_blank">@a.FileName</a><br />
+                    }
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

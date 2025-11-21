@@ -1,0 +1,57 @@
+@model IEnumerable<CMCS.Web.Models.Claim>
+@{
+    ViewData["Title"] = "PC / AM Queue";
+}
+<h3>Programme Coordinator / Academic Manager: Pending Claims</h3>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No pending claims.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date (dd/MM/yyyy)</th>
+                <th>Lecturer</th>
+                <th>Hours</th>
+                <th>Amount</th>
+                <th>Attachments</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Month</td>
+                <td>@c.LecturerName</td>
+                <td>@c.TotalHours</td>
+                <td>R @c.TotalAmount.ToString("N2")</td>
+                <td>
+                    @if (c.Attachments?.Any() == true)
+                    {
+                        foreach (var a in c.Attachments)
+                        {
+                            <a href="@a.StoragePath" target="_blank">@a.FileName</a><br />
+                        }
+                    }
+                </td>
+                <td>
+                    <form asp-action="Decide" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@c.Id" />
+                        <input type="hidden" name="decision" value="approve" />
+                        <button class="btn btn-sm btn-success" type="submit">Approve</button>
+                    </form>
+                    <form asp-action="Decide" method="post" class="d-inline ms-2">
+                        <input type="hidden" name="id" value="@c.Id" />
+                        <input type="hidden" name="decision" value="reject" />
+                        <button class="btn btn-sm btn-danger" type="submit">Reject</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

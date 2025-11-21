@@ -1,0 +1,94 @@
+@model CMCS.Web.Models.Claim
+@{
+    ViewData["Title"] = "Create Claim";
+}
+<h3>Lecturer: Submit Monthly Claim</h3>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label class="form-label">Date (dd/MM/yyyy)</label>
+            <input asp-for="Month" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Hourly Rate</label>
+            <input asp-for="HourlyRate" class="form-control" id="HourlyRate" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Lecturer</label>
+            <input asp-for="LecturerName" class="form-control" />
+        </div>
+    </div>
+
+    <h5>Work Entries</h5>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Work Date (dd/MM/yyyy)</th>
+                <th>Module</th>
+                <th>Task Type</th>
+                <th>Hours</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < Model.Entries.Count; i++)
+        {
+            <tr>
+                <td>
+                    <input asp-for="Entries[i].WorkDate" class="form-control work-date" />
+                </td>
+                <td><input asp-for="Entries[i].Module" class="form-control" /></td>
+                <td><input asp-for="Entries[i].TaskType" class="form-control" /></td>
+                <td><input asp-for="Entries[i].Hours" class="form-control hours-input" /></td>
+                <td><input asp-for="Entries[i].Notes" class="form-control" /></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label class="form-label">Auto-calculated total amount</label>
+            <input id="TotalAmountDisplay" class="form-control" readonly />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Upload evidence (.pdf .docx .xlsx, max 5MB)</label>
+        <input type="file" name="upload" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Submit Claim</button>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
+</form>
+
+<div class="text-danger mt-2">
+    @foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+    {
+        <div>@e.ErrorMessage</div>
+    }
+</div>
+
+@section Scripts {
+<script>
+    function recalcTotal() {
+        var rate = parseFloat($('#HourlyRate').val()) || 0;
+        var totalHours = 0;
+        $('.hours-input').each(function () {
+            var h = parseFloat($(this).val());
+            if (!isNaN(h)) {
+                totalHours += h;
+            }
+        });
+        var total = rate * totalHours;
+        $('#TotalAmountDisplay').val('R ' + total.toFixed(2));
+    }
+
+    $(document).ready(function () {
+        $('#HourlyRate').on('input', recalcTotal);
+        $('.hours-input').on('input', recalcTotal);
+        recalcTotal();
+    });
+</script>
+}

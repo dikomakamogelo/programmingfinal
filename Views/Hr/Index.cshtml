@@ -1,0 +1,38 @@
+@model IEnumerable<CMCS.Web.Models.Claim>
+@{
+    ViewData["Title"] = "HR Summary";
+}
+<h3>HR: Approved Claims Summary</h3>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">There are no approved claims yet.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date (dd/MM/yyyy)</th>
+                <th>Lecturer</th>
+                <th>Hours</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Month</td>
+                <td>@c.LecturerName</td>
+                <td>@c.TotalHours</td>
+                <td>R @c.TotalAmount.ToString("N2")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <div class="alert alert-secondary">
+        <strong>Total to pay:</strong> R @((decimal)ViewBag.TotalAmount).ToString("N2")
+    </div>
+}
