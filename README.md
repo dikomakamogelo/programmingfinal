@@ -25,4 +25,4 @@ How to run:
 3. Set CMCS.Web as the startup project.
 4. Press F5 to run.
 
-5. GitHub Link - 
+5. GitHub Link - https://github.com/dikomakamogelo/programmingfinal.git
